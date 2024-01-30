@@ -5,9 +5,12 @@
  * @author Ards Bautista
  * @overview The script is .
  */
-define(['N/record', 'N/search'], (record, search) => {
+define(['N/record', 'N/search', 'N/runtime'], (record, search, runtime) => {
   const TRAN = {
     INVOICE_LINK: 'custbody_re_invoice_link'
+  };
+  const SEARCH = {
+    BILL_ATTACH: 'customsearch_mhi_re_bill_with_attachment' // **DO NOT DELETE** MHI | RE | Bills with Attachments
   };
 
   /**
@@ -25,9 +28,13 @@ define(['N/record', 'N/search'], (record, search) => {
 
     try {
       log.debug(logTitle, '*** Start of Execution ***');
-      const searchObj = search.load({ id: 'customsearch_mhi_re_bill_with_attachment' }); // **DO NOT DELETE** MHI | RE | Bills with Attachments
+      const searchId = runtime.getCurrentScript().getParameter('custscript_mhi_re_billattachment_search');
 
-      return searchObj;
+      if (searchId) {
+        const searchObj = search.load({ id: searchId });
+
+        return searchObj;
+      }
     } catch (errorLog) {
       log.error(logTitle, errorLog);
     }
