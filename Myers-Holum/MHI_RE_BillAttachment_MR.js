@@ -3,7 +3,9 @@
  * @NScriptType MapReduceScript
  * @NModuleScope SameAccount
  * @author Ards Bautista
- * @overview The script is .
+ * @overview The script retrieves the vendor bills with empty Invoice Link values.
+ * The script retrieves the earliest file attached and gets the file URL to populate
+ * the Invoice Link field on the vendor bills.
  */
 define(['N/record', 'N/search', 'N/runtime'], (record, search, runtime) => {
   const TRAN = {
