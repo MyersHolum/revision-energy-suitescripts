@@ -7,7 +7,7 @@
  * The script retrieves the earliest file attached and gets the file URL to populate
  * the Invoice Link field on the vendor bills.
  */
-define(['N/record', 'N/search', 'N/runtime'], (record, search, runtime) => {
+define(['N/record', 'N/search', 'N/runtime', 'N/file'], (record, search, runtime, file) => {
   const TRAN = {
     INVOICE_LINK: 'custbody_re_invoice_link'
   };
@@ -115,6 +115,15 @@ define(['N/record', 'N/search', 'N/runtime'], (record, search, runtime) => {
           key: vbId,
           value: 'Bill#' + vbNum + ' File ID=' + fileId
         });
+      }
+
+      if (fileId) {
+        const documentObj = file.load({
+          id: fileId
+        });
+        documentObj.isOnline = true;
+        documentObj.save();
+        log.audit(logTitle, 'File ' + fileName + ' has been marked available without login.');
       }
     }
   };
