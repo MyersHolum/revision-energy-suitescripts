@@ -7,7 +7,7 @@
  * The script retrieves the earliest file attached and gets the file URL to populate
  * the Invoice Link field on the vendor bills.
  */
-define(['N/record', 'N/search', 'N/runtime', 'N/file'], (record, search, runtime, file) => {
+define(['N/record', 'N/search', 'N/runtime', 'N/file', 'N/url'], (record, search, runtime, file, url) => {
   const TRAN = {
     INVOICE_LINK: 'custbody_re_invoice_link'
   };
@@ -56,8 +56,15 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file'], (record, search, runtime
     const mapValue = JSON.parse(context.value).values;
     const fileId = mapValue['internalid.file'].value;
     const fileName = mapValue['name.file'];
-    const fileUrl = mapValue['url.file'];
+    let fileUrl = mapValue['url.file'];
     const vbNum = mapValue.tranid;
+
+    if (fileUrl) {
+      const host = url.resolveDomain({
+        hostType: url.HostType.APPLICATION
+      });
+      fileUrl = 'http://' + host + fileUrl;
+    }
 
     context.write({
       key: vbId,
@@ -84,10 +91,10 @@ define(['N/record', 'N/search', 'N/runtime', 'N/file'], (record, search, runtime
     const fileObj = {};
     for (let i = 0; i < context.values.length; i += 1) {
       const data = JSON.parse(context.values[i]);
-      const { id, name, url } = data;
+      const { id, name } = data;
 
       if (!vbNum) vbNum = data.num;
-      if (!fileObj[id]) fileObj[id] = { url, name };
+      if (!fileObj[id]) fileObj[id] = { url: data.url, name };
     }
 
     log.debug(logTitle, 'fileObj=' + JSON.stringify(fileObj));
